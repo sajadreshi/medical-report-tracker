@@ -51,13 +51,14 @@ class RAGAssistant:
         """
         self.vector_db.add_documents(documents)
 
-    def invoke(self, input: str, n_results: Optional[int] = None) -> str:
+    def invoke(self, input: str, n_results: Optional[int] = None, patient_name: Optional[str] = None) -> str:
         """
         Query the RAG assistant.
 
         Args:
             input: User's input/question
             n_results: Number of relevant chunks to retrieve. If None, uses RAG_N_RESULTS from .env or default 50.
+            patient_name: Optional patient name to filter context and add to question.
 
         Returns:
             String answer from the LLM based on retrieved context
@@ -69,6 +70,33 @@ class RAGAssistant:
         # Search for relevant context chunks
         search_results = self.vector_db.search(input, n_results=n_results)
         
+        # Filter by patient name if provided
+        if patient_name:
+            filtered_docs = []
+            filtered_metadatas = []
+            filtered_ids = []
+            filtered_distances = []
+            
+            for i, doc in enumerate(search_results['documents']):
+                metadata = search_results['metadatas'][i] if search_results.get('metadatas') else {}
+                if metadata.get('patient_name', '').upper() == patient_name.upper():
+                    filtered_docs.append(doc)
+                    filtered_metadatas.append(metadata)
+                    if search_results.get('ids'):
+                        filtered_ids.append(search_results['ids'][i])
+                    if search_results.get('distances'):
+                        filtered_distances.append(search_results['distances'][i])
+            
+            if not filtered_docs:
+                return f"I couldn't find any information about patient {patient_name} in the lab reports."
+            
+            search_results = {
+                'documents': filtered_docs,
+                'metadatas': filtered_metadatas,
+                'ids': filtered_ids if filtered_ids else [],
+                'distances': filtered_distances if filtered_distances else []
+            }
+        
         # Combine retrieved chunks into context string
         if not search_results['documents']:
             return "I couldn't find any relevant information in the lab reports to answer your question."
@@ -76,18 +104,23 @@ class RAGAssistant:
         context_parts = []
         for i, doc in enumerate(search_results['documents']):
             metadata = search_results['metadatas'][i] if search_results.get('metadatas') else {}
-            patient_name = metadata.get('patient_name', 'Unknown')
+            doc_patient_name = metadata.get('patient_name', 'Unknown')
             report_number = metadata.get('report_number', 'Unknown')
             
-            context_parts.append(f"[Report from {patient_name}, Report #{report_number}]\n{doc}")
+            context_parts.append(f"[Report from {doc_patient_name}, Report #{report_number}]\n{doc}")
         
         context = "\n\n---\n\n".join(context_parts)
+        
+        # Add patient context to question if provided
+        question = input
+        if patient_name:
+            question = f"Ask questions about {patient_name}. {input}"
         
         # Generate response using the chain
         try:
             response = self.chain.invoke({
                 "context": context,
-                "question": input
+                "question": question
             })
             return response
         except Exception as e:
