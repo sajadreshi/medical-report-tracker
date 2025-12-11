@@ -40,6 +40,26 @@ class VectorDB:
 
         print(f"Vector database initialized with collection: {self.collection_name}")
 
+    def clear_collection(self) -> None:
+        """
+        Clear all documents from the collection.
+        Deletes the existing collection and recreates it to ensure a fresh start.
+        """
+        try:
+            # Delete the existing collection if it exists
+            self.client.delete_collection(name=self.collection_name)
+            print(f"Deleted existing collection: {self.collection_name}")
+        except Exception as e:
+            # Collection might not exist yet, which is fine
+            print(f"Collection {self.collection_name} does not exist yet or could not be deleted: {e}")
+        
+        # Recreate the collection
+        self.collection = self.client.get_or_create_collection(
+            name=self.collection_name,
+            metadata={"description": "RAG document collection"},
+        )
+        print(f"Collection {self.collection_name} cleared and ready for new documents")
+
     def chunk_text(self, text: str, chunk_size: int = 500) -> List[str]:
         """
         Simple text chunking by splitting on spaces and grouping into chunks.

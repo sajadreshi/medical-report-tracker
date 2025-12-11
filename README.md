@@ -1,410 +1,298 @@
-# RAG-Based AI Assistant - AAIDC Project 1 Template
+# Medical Report Tracker
 
-## 🤖 What is this?
+A comprehensive web application for tracking and querying patient lab results over time using Retrieval-Augmented Generation (RAG) technology. This application processes multiple lab reports, builds a vector database for efficient searching, and provides an AI-powered interface to answer questions about patient health data.
 
-This is a **learning template** for building a RAG (Retrieval-Augmented Generation) AI assistant. RAG systems combine document search with AI chat - they can answer questions about your specific documents by finding relevant information and using it to generate responses.
+## 📋 Table of Contents
 
-**Think of it as:** ChatGPT that knows about YOUR documents and can answer questions about them.
+- [Introduction](#introduction)
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation & Setup](#installation--setup)
+- [How to Run](#how-to-run)
+- [Usage Examples](#usage-examples)
+- [Configuration](#configuration)
 
-## 🎯 What you'll build
+## 🎯 Introduction
 
-By completing this project, you'll have an AI assistant that can:
+The **Medical Report Tracker** is designed to analyze patient lab results across multiple time periods. The system:
 
-- 📄 **Load your documents** (PDFs, text files, etc.)
-- 🔍 **Search through them** to find relevant information
-- 💬 **Answer questions** using the information it found
-- 🧠 **Combine multiple sources** to give comprehensive answers
+- **Tracks Lab Results**: Manages multiple lab reports for patients over extended periods
+- **Builds RAG Pipeline**: Automatically chunks and embeds lab report data into a vector database for efficient retrieval
+- **Answers Questions**: Uses AI to answer natural language questions about patient lab results, trends, and health metrics
 
+For testing and demonstration purposes, the project uses the **Faker** library to generate realistic patient data and the **ReportLab** library to create standardized PDF lab reports that mimic real-world medical documents.
 
-Welcome to your RAG (Retrieval-Augmented Generation) project! This repository provides a **template** that you need to complete. The framework is set up, but the core functionality is missing - that's your job to implement!
+## ✨ Features
 
-## 🎯 What You Need to Build
+- **Patient Management**: View and select from a list of patients with their lab reports
+- **Sample Data Generation**: Generate realistic lab reports for testing with customizable parameters
+- **RAG Pipeline Processing**: Automatically process all lab reports, chunk them, and create embeddings
+- **AI-Powered Q&A**: Ask natural language questions about patient lab results
+- **Patient-Specific Context**: Automatically filter queries by selected patient
+- **Web-Based UI**: Modern, responsive interface for easy interaction
+- **Multiple LLM Support**: Works with OpenAI, Groq, and Google Gemini APIs
 
-You will implement a complete RAG system that can:
+## 🔧 How It Works
 
-- Load and chunk documents from the `data/` directory
-- Create embeddings and store them in a vector database
-- Search for relevant context based on user queries
-- Generate responses using retrieved context and an LLM
+The application uses a **Retrieval-Augmented Generation (RAG)** pipeline to answer questions about patient lab reports:
 
+1. **Document Loading**: PDF lab reports are loaded from the `data/` directory
+2. **Text Extraction**: Text content is extracted from PDF files using PyPDF
+3. **Chunking**: Documents are split into smaller, manageable chunks using LangChain's RecursiveCharacterTextSplitter
+4. **Embedding**: Each chunk is converted into a vector embedding using HuggingFace's sentence-transformers model
+5. **Vector Storage**: Embeddings are stored in ChromaDB, a persistent vector database
+6. **Query Processing**: When a question is asked:
+   - The query is converted to an embedding
+   - Similar chunks are retrieved from the vector database
+   - If a patient is selected, results are filtered to that patient
+   - Retrieved context is combined with the question
+   - An LLM generates a response based on the retrieved context
 
-## 📝 Implementation Steps
+## 🛠 Technology Stack
 
-The project requires implementing 7 main steps:
+- **Backend Framework**: FastAPI
+- **Vector Database**: ChromaDB
+- **Embeddings**: HuggingFace Sentence Transformers (`all-MiniLM-L6-v2`)
+- **LLM Integration**: LangChain (supports OpenAI, Groq, Google Gemini)
+- **PDF Processing**: PyPDF
+- **Report Generation**: ReportLab, Faker
+- **Frontend**: HTML, CSS, JavaScript
+- **Text Processing**: LangChain Text Splitters
 
-1. **Prepare Your Documents** - Add your own documents to the data directory
-2. **Document Loading** - Load documents from files into the system
-3. **Text Chunking** - Split documents into smaller, searchable chunks
-4. **Document Ingestion** - Process and store documents in the vector database  
-5. **Similarity Search** - Find relevant documents based on queries
-6. **RAG Prompt Template** - Design effective prompts for the LLM
-7. **RAG Query Pipeline** - Complete query-response pipeline using retrieved context
-
----
-
-### Step 1: Prepare Your Documents
-
-**Replace the sample documents with your own content**
-
-The `data/` directory contains sample files on various topics. Replace these with documents relevant to your domain:
+## 📁 Project Structure
 
 ```
-data/
-├── your_topic_1.txt
-├── your_topic_2.txt
-└── your_topic_3.txt
+medical-report-tracker/
+├── src/
+│   ├── app.py                 # FastAPI application with API endpoints
+│   ├── rag_assistant.py       # RAG assistant implementation
+│   ├── vectordb.py            # Vector database wrapper (ChromaDB)
+│   ├── llms.py                # LLM initialization and configuration
+│   ├── labreport_generator.py # Lab report PDF generator
+│   ├── templates/
+│   │   └── index.html         # Web UI template
+│   └── utils/
+│       └── prompt_builder.py  # Prompt template builder
+├── data/                      # Directory for lab report PDFs
+├── chroma_db/                 # ChromaDB persistent storage
+├── config/
+│   └── prompts.yaml           # RAG prompt templates
+├── requirements.txt           # Python dependencies
+└── README.md                  # This file
 ```
 
-Each file should contain text content you want your RAG system to search through.
+## 📋 Prerequisites
 
----
+Before running the application, ensure you have:
 
-### Step 2: Implement Document Loading
+- **Python 3.8 or higher**
+- **API Key** from one of the following providers:
+  - [OpenAI](https://platform.openai.com/api-keys) (recommended)
+  - [Groq](https://console.groq.com/keys) (free tier available)
+  - [Google AI](https://aistudio.google.com/app/apikey)
 
-**Location:** `src/app.py`
+## 🚀 Installation & Setup
 
-```python
-def load_documents() -> List[str]:
-    """
-    Load documents for demonstration.
+### 1. Clone the Repository
 
-    Returns:
-        List of sample documents
-    """
-    results = []
-    # TODO: Implement document loading
-    # HINT: Read the documents from the data directory
-    # HINT: Return a list of documents
-    # HINT: Your implementation depends on the type of documents you are using (.txt, .pdf, etc.)
-
-    # Your implementation here
-    return results
+```bash
+git clone https://github.com/sajadreshi/medical-report-tracker.git
+cd medical-report-tracker
 ```
 
-**What you need to do:**
+### 2. Install Dependencies
 
-- Read files from the `data/` directory
-- Load the content of each file into memory
-- Return a list of document dictionaries with content and metadata
-- You implementation should handle the type of files you are using (text, pdf, etc)
-
-**Key considerations:**
-
-- Use `os.listdir()` or `glob.glob()` to find files in the data directory
-- Read file contents using appropriate encoding (usually 'utf-8')
-- Create document dictionaries with 'content' and 'metadata' fields
-- Handle errors gracefully (missing files, encoding issues, etc.)
-
----
-
-### Step 3: Implement Text Chunking
-
-**Location:** `src/vectordb.py`
-
-```python
-def chunk_text(self, text: str, chunk_size: int = 500) -> List[str]:
-    """
-    Split text into smaller chunks for better retrieval.
-  
-    Args:
-        text: Input text to chunk
-        chunk_size: Approximate number of characters per chunk
-  
-    Returns:
-        List of text chunks
-    """
-    # TODO: Your implementation here
+```bash
+pip install -r requirements.txt
 ```
 
-**What you need to do:**
+### 3. Configure Environment Variables
 
-- Choose a chunking strategy (word-based, sentence-based, or use LangChain's text splitters)
-- Split the input text into manageable chunks
-- Return a list of text strings
+Create a `.env` file in the project root and add your API key:
 
-**Hint:** You have multiple options - start simple with word-based splitting or explore LangChain's `RecursiveCharacterTextSplitter`.
+```bash
+# Choose one of the following:
+OPENAI_API_KEY=your_openai_api_key_here
+# OR
+GROQ_API_KEY=your_groq_api_key_here
+# OR
+GOOGLE_API_KEY=your_google_api_key_here
 
----
+# Optional: Specify model preferences
+OPENAI_MODEL=gpt-4o-mini
+GROQ_MODEL=llama-3.1-8b-instant
+GOOGLE_MODEL=gemini-1.5-flash
 
-### Step 4: Implement Document Ingestion
-
-**Location:** `src/vectordb.py`
-
-```python
-def add_documents(self, documents: List[Dict[str, Any]]) -> None:
-    """
-    Process documents and add them to the vector database.
-  
-    Args:
-        documents: List of documents with 'content' and optional 'metadata'
-    """
-    # TODO: Your implementation here
+# Optional: RAG configuration
+RAG_N_RESULTS=50
+CHROMA_COLLECTION_NAME=rag_lab_reports
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
 ```
 
-**What you need to do:**
+## 🎮 How to Run
 
-- Loop through the documents list
-- Extract content and metadata from each document
-- Use your `chunk_text()` method to split documents
-- Create embeddings using `self.embedding_model.encode()`
-- Store everything in ChromaDB using `self.collection.add()`
+### Step 1: Start the Application
 
-**Key components:**
-
-- Chunk each document's content
-- Generate unique IDs for each chunk
-- Create embeddings for all chunks
-- Store in the vector database
-
----
-
-### Step 5: Implement Similarity Search
-
-**Location:** `src/vectordb.py`
-
-```python
-def search(self, query: str, n_results: int = 5) -> Dict[str, Any]:
-    """
-    Find documents similar to the query.
-  
-    Args:
-        query: Search query
-        n_results: Number of results to return
-  
-    Returns:
-        Dictionary with search results
-    """
-    # TODO: Your implementation here
-```
-
-**What you need to do:**
-
-- Create an embedding for the query using `self.embedding_model.encode()`
-- Search the ChromaDB collection using `self.collection.query()`
-- Return results in the expected format with keys: `documents`, `metadatas`, `distances`, `ids`
-
----
-
-### Step 6: Implement RAG Prompt Template
-
-**Location:** `src/app.py`
-
-```python
-# Create RAG prompt template
-# TODO: Implement your RAG prompt template
-# HINT: Use ChatPromptTemplate.from_template() with a template string
-# HINT: Your template should include placeholders for {context} and {question}
-# HINT: Design your prompt to effectively use retrieved context to answer questions
-self.prompt_template = None  # Your implementation here
-```
-
-**What you need to do:**
-
-- Design a prompt template that effectively combines retrieved context with user questions
-- Use `ChatPromptTemplate.from_template()` to create the template
-- Include placeholders for `{context}` (retrieved documents) and `{question}` (user query)
-- Consider how to instruct the LLM to use the context appropriately
-- Handle cases where the context might not contain relevant information
-
-**Key considerations:**
-
-- Clear instructions for the AI on how to use the retrieved context
-- Guidance on what to do when context is insufficient or irrelevant
-- Consistent formatting that works well with your chosen LLM
-- Balance between being specific enough to be helpful and flexible enough to handle various queries
-
----
-
-### Step 7: Implement RAG Query Pipeline
-
-**Location:** `src/app.py`
-
-```python
-def query(self, question: str, n_results: int = 3) -> Dict[str, Any]:
-    """
-    Answer questions using retrieved context.
-  
-    Args:
-        question: User's question
-        n_results: Number of context chunks to retrieve
-  
-    Returns:
-        Dictionary with answer and context information
-    """
-    # TODO: Your implementation here
-```
-
-**What you need to do:**
-
-- Use `self.vector_db.search()` to find relevant context
-- Combine retrieved chunks into a context string
-- Use `self.chain.invoke()` to generate a response
-- Return a dictionary with the answer and metadata
-
-**The RAG pipeline:**
-
-1. Search for relevant chunks
-2. Combine chunks into context
-3. Generate response using LLM + context
-4. Return structured results
-
-
----
-
-## 🧪 Testing Your Implementation
-
-### Test Individual Components
-
-1. **Test chunking:**
-
-   ```python
-   from src.vectordb import VectorDB
-   vdb = VectorDB()
-   chunks = vdb.chunk_text("Your test text here...")
-   print(f"Created {len(chunks)} chunks")
-   ```
-2. **Test document loading:**
-
-   ```python
-   documents = [{"content": "Test document", "metadata": {"title": "Test"}}]
-   vdb.add_documents(documents)
-   ```
-3. **Test search:**
-
-   ```python
-   results = vdb.search("your test query")
-   print(f"Found {len(results['documents'])} results")
-   ```
-
-### Test Full System
-
-Once implemented, run:
+Run the FastAPI server:
 
 ```bash
 python src/app.py
 ```
 
-Try these example questions:
+Alternatively, you can use uvicorn directly:
 
-- "What is [topic from your documents]?"
-- "Explain [concept from your documents]"
-- "How does [process from your documents] work?"
-
----
-
-## 🔧 Implementation Freedom
-
-**Important:** This template uses specific packages (ChromaDB, LangChain, HuggingFace Transformers) and approaches, but **you are completely free to use whatever you prefer!**
-
-### Alternative Options You Can Choose:
-
-**Vector Databases:**
-- FAISS (Facebook AI Similarity Search)
-- Pinecone
-- Weaviate
-- Qdrant
-- Or any other vector store you prefer
-
-**LLM Frameworks:**
-- Direct API calls (OpenAI, Anthropic, etc.)
-- Ollama for local models
-- Hugging Face Transformers
-- LlamaIndex instead of LangChain
-
-**Embedding Models:**
-- OpenAI embeddings (ada-002)
-- Cohere embeddings
-- Any Hugging Face model
-- Local embedding models
-
-**Text Processing:**
-- Custom chunking logic
-- spaCy for advanced NLP
-- NLTK for text processing
-- Your own parsing methods
-
----
-
-## 🚀 Setup Instructions
-
-### Prerequisites
-
-Before starting, make sure you have:
-
-- Python 3.8 or higher installed
-- An API key from **one** of these providers:
-  - [OpenAI](https://platform.openai.com/api-keys) (most popular)
-  - [Groq](https://console.groq.com/keys) (free tier available)
-  - [Google AI](https://aistudio.google.com/app/apikey) (competitive pricing)
-
-### Quick Setup
-
-1. **Clone and install dependencies:**
-
-   ```bash
-   git clone [your-repo-url]
-   cd rt-aaidc-project1-template
-   pip install -r requirements.txt
-   ```
-
-2. **Configure your API key:**
-
-   ```bash
-   # Create environment file (choose the method that works on your system)
-   cp .env.example .env    # Linux/Mac
-   copy .env.example .env  # Windows
-   ```
-
-   Edit `.env` and add your API key:
-
-   ```
-   OPENAI_API_KEY=your_key_here
-   # OR
-   GROQ_API_KEY=your_key_here  
-   # OR
-   GOOGLE_API_KEY=your_key_here
-   ```
-
-
----
-
-## 📁 Project Structure
-
-```
-rt-aaidc-project1-template/
-├── src/
-│   ├── app.py           # Main RAG application (implement Steps 2, 6-7)
-│   └── vectordb.py      # Vector database wrapper (implement Steps 3-5)
-├── data/               # Replace with your documents (Step 1)
-│   ├── *.txt          # Your text files here
-├── requirements.txt    # All dependencies included
-├── .env.example       # Environment template
-└── README.md          # This guide
+```bash
+uvicorn src.app:app --reload --host 0.0.0.0 --port 8000
 ```
 
+### Step 2: Access the Web Interface
+
+Open your web browser and navigate to:
+
+```
+http://localhost:8000/medicalreport/
+```
+
+You should see the Medical Report Tracker interface with three main buttons at the top.
+
+### Step 3: Generate Sample Data
+
+1. Click the **"Generate Sample Data"** button (green button with beaker icon)
+2. This will create sample lab reports in the `data/` directory
+3. By default, it generates 3 patients with 4 reports each (12 total reports)
+4. Reports are saved as PDF files with the naming pattern: `LabReport_{PatientName}_Report{Number}_{Date}.pdf`
+
+### Step 4: Process RAG Pipeline
+
+1. Click the **"Process RAG Pipeline"** button (blue-to-pink gradient button with rocket icon)
+2. Wait for the processing to complete (this may take a few moments)
+3. You should see a success message indicating how many documents were processed
+4. The system will:
+   - Load all PDF files from the `data/` directory
+   - Extract text content
+   - Chunk the documents
+   - Create embeddings
+   - Store everything in the vector database
+
+### Step 5: List Patients
+
+1. Click the **"List Patients"** button (purple button with document icon)
+2. You'll see a list of unique patient names extracted from the lab reports
+3. Click on any patient name to select them (the name will be highlighted)
+
+### Step 6: Ask Questions
+
+1. With a patient selected, the chat interface at the bottom will update to show the patient's name
+2. Type your question in the input field (e.g., "How has the cholesterol level improved over the last few months?")
+3. Click **"Send"** or press Enter
+4. The AI will search through the patient's lab reports and provide an answer based on the retrieved context
+
+## 💡 Usage Examples
+
+Here are some example questions you can ask about patients:
+
+### General Questions
+- "Show me how has the patient's cholesterol levels improved over the last 3 months"
+- "Give me a summary of glucose levels about the patient"
+- "What are the patient's latest lab results?"
+- "Compare the patient's HDL and LDL cholesterol levels across all reports"
+
+### Specific Metrics
+- "What is the patient's current hemoglobin level?"
+- "Show me the trend in triglyceride levels"
+- "What are the patient's liver function test results?"
+- "Has the patient's A1C level changed over time?"
+
+### Trend Analysis
+- "How have the patient's lab values changed over the past 4 months?"
+- "Are there any abnormal values in the patient's recent reports?"
+- "What improvements or concerns are there in the patient's health metrics?"
+
+### Patient-Specific Queries
+When a patient is selected, all questions are automatically scoped to that patient.
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+The application supports the following environment variables (in `.env` file):
+
+#### API Keys (Required - choose one)
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `GROQ_API_KEY`: Your Groq API key
+- `GOOGLE_API_KEY`: Your Google AI API key
+
+#### Model Selection (Optional)
+- `OPENAI_MODEL`: Model name for OpenAI (default: `gpt-4o-mini`)
+- `GROQ_MODEL`: Model name for Groq (default: `llama-3.1-8b-instant`)
+- `GOOGLE_MODEL`: Model name for Google (default: `gemini-1.5-flash`)
+
+#### RAG Configuration (Optional)
+- `RAG_N_RESULTS`: Number of document chunks to retrieve (default: `50`)
+- `CHROMA_COLLECTION_NAME`: Name of the ChromaDB collection (default: `rag_lab_reports`)
+- `EMBEDDING_MODEL`: HuggingFace embedding model (default: `sentence-transformers/all-MiniLM-L6-v2`)
+
+### Customizing Sample Data Generation
+
+You can modify the sample data generation by editing `src/labreport_generator.py`:
+
+```python
+# In src/app.py, the generate_data endpoint calls:
+generate_lab_reports(
+    num_patients=3,        # Number of patients
+    reports_per_patient=4, # Reports per patient
+    date_interval_months=1 # Months between reports
+)
+```
+
+## 🔍 How the RAG Pipeline Works
+
+1. **Document Processing**:
+   - PDFs are loaded and text is extracted
+   - Metadata (patient name, report number, date) is extracted from filenames
+   - Documents are chunked into ~500 character segments with 10% overlap
+
+2. **Embedding Creation**:
+   - Each chunk is converted to a vector using sentence transformers
+   - Embeddings capture semantic meaning for better search
+
+3. **Vector Storage**:
+   - Embeddings are stored in ChromaDB with associated metadata
+   - Metadata includes patient name, report number, and date for filtering
+
+4. **Query Processing**:
+   - User question is converted to an embedding
+   - Similar chunks are retrieved from the vector database
+   - If a patient is selected, results are filtered to that patient
+   - Retrieved context is formatted and sent to the LLM
+
+5. **Response Generation**:
+   - LLM receives the question and retrieved context
+   - LLM generates a response based on the context
+   - Response is formatted and displayed in the UI
+
+## 🐛 Troubleshooting
+
+### No API Key Error
+If you see an error about missing API keys, ensure your `.env` file is in the project root and contains at least one API key.
+
+### No Documents Found
+If the RAG pipeline reports no documents found:
+1. Make sure you've clicked "Generate Sample Data" first
+2. Check that PDF files exist in the `data/` directory
+3. Verify file naming follows the pattern: `LabReport_{PatientName}_Report{Number}_{Date}.pdf`
+
+### Vector Database Issues
+If you encounter issues with the vector database:
+- The `chroma_db/` directory stores the vector database
+- You can delete this directory to start fresh (it will be recreated)
+- Ensure you have write permissions in the project directory
+
+
+
 ---
 
-## 🎓 Learning Objectives
-
-By completing this project, you will:
-
-- ✅ Understand RAG architecture and data flow
-- ✅ Implement text chunking strategies
-- ✅ Work with vector databases and embeddings
-- ✅ Build LLM-powered applications with LangChain
-- ✅ Handle multiple API providers
-- ✅ Create production-ready AI applications
-
----
-
-## 🏁 Success Criteria
-
-Your implementation is complete when:
-
-1. ✅ You can load your own documents
-2. ✅ The system chunks and embeds documents
-3. ✅ Search returns relevant results
-4. ✅ The RAG system generates contextual answers
-5. ✅ You can ask questions and get meaningful responses
-
-**Good luck building your RAG system! 🚀**
+**Note**: This application is designed for demonstration and testing purposes. The generated lab reports use fake data and should not be used for actual medical purposes.
