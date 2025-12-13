@@ -129,3 +129,7 @@ zstandard==0.24.0
 reportlab==4.4.5
 faker==38.2.0
 pypdf==6.4.0
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.20
+email-validator==2.3.1

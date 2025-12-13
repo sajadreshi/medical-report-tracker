@@ -60,6 +60,44 @@ class VectorDB:
         )
         print(f"Collection {self.collection_name} cleared and ready for new documents")
 
+    def delete_patient_documents(self, patient_name: str) -> int:
+        """
+        Delete all documents for a specific patient from the collection.
+        
+        Args:
+            patient_name: Patient name to delete documents for (case-insensitive)
+        
+        Returns:
+            Number of documents deleted
+        """
+        try:
+            # Get all documents with their IDs and metadata
+            all_docs = self.collection.get(include=['metadatas'])
+            
+            if not all_docs['ids']:
+                print(f"No documents in collection to delete")
+                return 0
+            
+            # Find IDs of documents matching this patient
+            ids_to_delete = []
+            patient_name_upper = patient_name.upper()
+            
+            for i, metadata in enumerate(all_docs['metadatas']):
+                if metadata and metadata.get('patient_name', '').upper() == patient_name_upper:
+                    ids_to_delete.append(all_docs['ids'][i])
+            
+            if ids_to_delete:
+                self.collection.delete(ids=ids_to_delete)
+                print(f"Deleted {len(ids_to_delete)} documents for patient {patient_name}")
+                return len(ids_to_delete)
+            else:
+                print(f"No documents found for patient {patient_name}")
+                return 0
+                
+        except Exception as e:
+            print(f"Error deleting documents for patient {patient_name}: {e}")
+            return 0
+
     def chunk_text(self, text: str, chunk_size: int = 500) -> List[str]:
         """
         Simple text chunking by splitting on spaces and grouping into chunks.
@@ -109,8 +147,10 @@ class VectorDB:
             chunks = self.chunk_text(content)
             
             # Create IDs and metadata for each chunk
+            # Use filename or patient_name to make IDs unique across different processing runs
+            unique_prefix = metadata.get('filename', '') or metadata.get('patient_name', '') or f"doc_{doc_idx}"
             for chunk_idx, chunk in enumerate(chunks):
-                chunk_id = f"doc_{doc_idx}_chunk_{chunk_idx}"
+                chunk_id = f"{unique_prefix}_chunk_{chunk_idx}"
                 all_ids.append(chunk_id)
                 all_chunks.append(chunk)
                 

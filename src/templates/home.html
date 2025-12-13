@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Report Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 1.5em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 1.3em;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .nav-link.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .hero {
+            color: white;
+            margin-bottom: 60px;
+        }
+        
+        .hero h1 {
+            font-size: 3.2em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .cards-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 35px;
+            width: 320px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        
+        .card-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .card-badge.signed-in {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        
+        .footer {
+            padding: 20px 40px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+        
+        .features {
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .feature {
+            color: white;
+            text-align: center;
+            max-width: 200px;
+        }
+        
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .feature h3 {
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        
+        .feature p {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2em;
+            }
+            
+            .hero p {
+                font-size: 1.1em;
+            }
+            
+            .cards-container {
+                padding: 0 20px;
+            }
+            
+            .card {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🏥</span>
+            Medical Report Tracker
+        </div>
+        <nav class="nav-links">
+            <a href="/medicalreport/" class="nav-link active">Home</a>
+            <a href="/medicalreport/dashboard" class="nav-link" id="dashboardNavLink">Dashboard</a>
+            <a href="/medicalreport/login" class="nav-link" id="loginNavLink">Sign In</a>
+        </nav>
+    </header>
+    
+    <main class="main-content">
+        <div class="hero">
+            <h1>🏥 Medical Report Tracker</h1>
+            <p>Track and analyze patient lab reports over time using AI-powered insights. 
+               Generate reports, build RAG pipelines, and ask questions about patient health trends.</p>
+        </div>
+        
+        <div class="cards-container">
+            <a href="#" class="card" id="adminCard" onclick="navigateToDashboard(event)">
+                <div class="card-icon">👨‍💼</div>
+                <h2>Admin Dashboard</h2>
+                <p>Manage patients, generate lab reports, process RAG pipelines, and interact with the AI assistant.</p>
+                <span class="card-badge" id="cardBadge">Sign in required</span>
+            </a>
+            
+            <a href="#" class="card" onclick="navigateToDashboard(event)">
+                <div class="card-icon">📊</div>
+                <h2>AI-Powered Analysis</h2>
+                <p>Ask natural language questions about patient health trends, lab results, and medical history.</p>
+                <span class="card-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">Powered by RAG</span>
+            </a>
+            
+            <a href="#" class="card" onclick="navigateToDashboard(event)">
+                <div class="card-icon">📈</div>
+                <h2>Trend Tracking</h2>
+                <p>Monitor changes in patient lab values over time with intelligent summarization and insights.</p>
+                <span class="card-badge" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">Smart Analytics</span>
+            </a>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Access</h3>
+                <p>Admin authentication protects patient data</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Fast Retrieval</h3>
+                <p>Vector database for quick search</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>LLM Integration</h3>
+                <p>Natural language understanding</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📄</div>
+                <h3>PDF Generation</h3>
+                <p>Professional lab report formats</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>Medical Report Tracker - A RAG-powered patient lab report analysis system</p>
+    </footer>
+    
+    <script>
+        const API_BASE = '/medicalreport/api';
+        let isSignedIn = false;
+        
+        window.onload = async function() {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                // Verify token is still valid
+                isSignedIn = await verifyToken(token);
+                updateUI();
+            }
+        };
+        
+        async function verifyToken(token) {
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    return true;
+                } else {
+                    // Token is invalid, remove it
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('admin_username');
+                    return false;
+                }
+            } catch (error) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('admin_username');
+                return false;
+            }
+        }
+        
+        function updateUI() {
+            const cardBadge = document.getElementById('cardBadge');
+            const loginNavLink = document.getElementById('loginNavLink');
+            const dashboardNavLink = document.getElementById('dashboardNavLink');
+            
+            if (isSignedIn) {
+                const username = localStorage.getItem('admin_username') || 'Admin';
+                cardBadge.textContent = `Signed in as ${username}`;
+                cardBadge.classList.add('signed-in');
+                loginNavLink.textContent = 'Logout';
+                loginNavLink.href = '#';
+                loginNavLink.onclick = logout;
+            }
+        }
+        
+        function navigateToDashboard(event) {
+            event.preventDefault();
+            if (isSignedIn) {
+                window.location.href = '/medicalreport/dashboard';
+            } else {
+                window.location.href = '/medicalreport/login';
+            }
+        }
+        
+        function logout(event) {
+            event.preventDefault();
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('admin_username');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
+

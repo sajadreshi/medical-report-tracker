@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Report Tracker</title>
+    <title>Medical Report Tracker - Admin Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -12,62 +12,169 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 30px 20px;
+            padding: 20px;
             margin: 0;
-            box-sizing: border-box;
         }
         
         .container {
-            max-width: 1200px;
-            margin: 20px auto;
+            max-width: 1400px;
+            margin: 0 auto;
             background: white;
             border-radius: 12px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 80px);
-            padding-bottom: 0;
+            min-height: calc(100vh - 40px);
         }
         
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
-            text-align: center;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
         }
         
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        .header-left h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
         }
         
-        .header p {
+        .header-left p {
             opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .admin-info {
+            text-align: right;
+        }
+        
+        .admin-info .username {
+            font-weight: 600;
             font-size: 1.1em;
         }
         
-        .controls {
-            padding: 30px;
+        .admin-info .role {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+        
+        .logout-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .main-content {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            border-bottom: 2px solid #f0f0f0;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: #f8f9fa;
+            border-right: 2px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .sidebar-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .tab-bar {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+        
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-btn:hover {
+            color: #667eea;
+        }
+        
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow: auto;
+            padding: 20px;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
         }
         
         .btn {
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            flex: 1;
-            min-width: 200px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn-primary {
@@ -77,7 +184,7 @@
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
         
         .btn-success {
@@ -87,17 +194,17 @@
         
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
         }
         
-        .btn-info {
-            background: linear-gradient(135deg, #3494E6 0%, #EC6EAD 100%);
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
             color: white;
         }
         
-        .btn-info:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 148, 230, 0.4);
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
         }
         
         .btn:disabled {
@@ -106,11 +213,135 @@
             transform: none;
         }
         
-        .status {
-            padding: 20px 30px;
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .patient-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        
+        .patient-item {
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .patient-item:hover {
+            border-color: #667eea;
+            transform: translateX(3px);
+        }
+        
+        .patient-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .patient-item .patient-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .patient-item .patient-info {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .patient-item.selected .patient-info {
+            opacity: 0.9;
+        }
+        
+        .patient-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .patient-item-content {
+            flex: 1;
+        }
+        
+        .delete-patient-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 4px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .delete-patient-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+            opacity: 1;
+        }
+        
+        .patient-item.selected .delete-patient-btn {
+            opacity: 0.7;
+        }
+        
+        .patient-item.selected .delete-patient-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 1;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 12px 10px 35px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+        
+        .status-bar {
+            padding: 15px 20px;
             background: #f8f9fa;
-            border-bottom: 2px solid #f0f0f0;
-            min-height: 60px;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
         }
         
         .status-message {
@@ -119,12 +350,6 @@
             border-radius: 6px;
             border-left: 4px solid #667eea;
             font-size: 14px;
-            color: #333;
-        }
-        
-        .status-message.error {
-            border-left-color: #e74c3c;
-            background: #fee;
         }
         
         .status-message.success {
@@ -132,237 +357,94 @@
             background: #efe;
         }
         
-        .files-list {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 2px solid #f0f0f0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        
-        .files-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .files-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .files-list::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-        
-        .files-list::-webkit-scrollbar-thumb:hover {
-            background: #5568d3;
-        }
-        
-        .files-list h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 1.1em;
-            flex-shrink: 0;
-        }
-        
-        .patients-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-right: 5px;
-            flex: 1;
-            min-height: 0;
-        }
-        
-        .patients-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .patients-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .patients-list::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-        
-        .patients-list::-webkit-scrollbar-thumb:hover {
-            background: #5568d3;
-        }
-        
-        .patient-item {
-            padding: 12px 16px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            font-size: 15px;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-        }
-        
-        .patient-item:hover {
-            background: #f0f4ff;
-            border-color: #667eea;
-            transform: translateX(3px);
-        }
-        
-        .patient-item.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-        }
-        
-        .patient-item.selected:hover {
-            background: linear-gradient(135deg, #5568d3 0%, #653a91 100%);
-        }
-        
-        .patient-item::before {
-            content: "👤";
-            font-size: 18px;
+        .status-message.error {
+            border-left-color: #e74c3c;
+            background: #fee;
         }
         
         .chat-container {
-            flex-shrink: 0;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 30px 35px;
-            margin: 0 30px 20px 30px;
             background: #f8f9fa;
-            border-top: 2px solid #f0f0f0;
-            border-radius: 12px;
-            max-height: 400px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            position: relative;
-            z-index: 10;
         }
         
-        .chat-messages-container {
+        .chat-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .chat-header h3 {
+            margin-bottom: 5px;
+        }
+        
+        .chat-header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            min-height: 150px;
-            max-height: 250px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-        
-        .chat-messages-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .chat-messages-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .chat-messages-container::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-        
-        .chat-messages-container::-webkit-scrollbar-thumb:hover {
-            background: #5568d3;
+            gap: 15px;
         }
         
         .chat-message {
+            max-width: 85%;
             padding: 12px 16px;
             border-radius: 12px;
-            max-width: 85%;
-            word-wrap: break-word;
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.5;
         }
         
         .chat-message.user {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             align-self: flex-end;
-            text-align: right;
+            border-bottom-right-radius: 4px;
         }
         
         .chat-message.assistant {
-            background: #f0f0f0;
+            background: white;
             color: #333;
             align-self: flex-start;
-            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
-        .chat-message.loading {
-            background: #f0f0f0;
-            color: #666;
-            font-style: italic;
-            align-self: flex-start;
+        .chat-message.assistant ul, .chat-message.assistant ol {
+            margin: 10px 0 10px 20px;
         }
         
-        .chat-message.assistant p {
-            margin: 0 0 8px 0;
-        }
-        
-        .chat-message.assistant p:last-child {
-            margin-bottom: 0;
+        .chat-message.assistant li {
+            margin-bottom: 5px;
         }
         
         .chat-message.assistant strong {
             color: #667eea;
-            font-weight: 600;
-        }
-        
-        .chat-message.assistant ul,
-        .chat-message.assistant ol {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-        
-        .chat-message.assistant li {
-            margin: 4px 0;
-        }
-        
-        .chat-welcome-message {
-            background: #f0f0f0;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-            text-align: center;
-            display: none;
-        }
-        
-        .chat-welcome-message.show {
-            display: block;
         }
         
         .chat-input-container {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
             display: flex;
             gap: 10px;
         }
         
         .chat-input {
             flex: 1;
-            padding: 15px 20px;
+            padding: 12px 16px;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 15px;
-            font-family: inherit;
-            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
         }
         
         .chat-input:focus {
@@ -371,21 +453,20 @@
         }
         
         .chat-send-btn {
-            padding: 15px 30px;
+            padding: 12px 24px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 15px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
         
         .chat-send-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
         
         .chat-send-btn:disabled {
@@ -393,20 +474,101 @@
             cursor: not-allowed;
         }
         
-        .chat-send-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
-        .chat-send-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .action-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        .action-card h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .action-card p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
         }
         
         .spinner {
             display: inline-block;
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -416,320 +578,637 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        .patient-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .reports-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        
+        .patient-item.selected .reports-badge {
+            background: rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏥 Medical Report Tracker</h1>
-            <p>Generate test data, process reports, and ask questions about patients</p>
-        </div>
-        
-        <div class="controls">
-            <button class="btn btn-primary" onclick="listFiles()">📋 List Patients</button>
-            <button class="btn btn-success" onclick="generateData()">🔬 Generate Sample Data</button>
-            <button class="btn btn-info" onclick="processRAG()">🚀 Process RAG Pipeline</button>
-        </div>
-        
-        <div class="status" id="status">
-            <div class="status-message">Ready to start. Click a button above to begin.</div>
-        </div>
-        
-        <div class="files-list" id="filesList" style="display: none;">
-            <h3>Patients in Data Directory:</h3>
-            <div class="patients-list" id="patientsList"></div>
-        </div>
-        
-        <div class="chat-container">
-            <div class="chat-welcome-message show" id="chatWelcomeMessage">
-                👋 Ask questions about patients. I'll help you find information from their lab reports.
+            <div class="header-left">
+                <h1>🏥 Medical Report Tracker</h1>
+                <p>Admin Dashboard</p>
             </div>
-            <div class="chat-messages-container" id="chatMessagesContainer"></div>
-            <div class="chat-input-container">
-                <input 
-                    type="text" 
-                    class="chat-input" 
-                    id="chatInput" 
-                    placeholder="Ask a question about the patients..."
-                    onkeypress="if(event.key === 'Enter') sendMessage()"
-                >
-                <button class="chat-send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+            <div class="header-right">
+                <div class="admin-info">
+                    <div class="username" id="adminUsername">Admin</div>
+                    <div class="role">Administrator</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3>👥 Patients</h3>
+                    <div class="search-box">
+                        <input type="text" id="patientSearch" placeholder="Search patients..." oninput="searchPatients()">
+                    </div>
+                    <div class="patient-list" id="patientList">
+                        <div class="empty-state">
+                            <div class="icon">📋</div>
+                            <p>No patients found.<br>Register a new patient to get started.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="showAddPatientModal()">
+                        ➕ Register New Patient
+                    </button>
+                </div>
+            </div>
+            
+            <div class="content-area">
+                <div class="tab-bar">
+                    <button class="tab-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
+                    <button class="tab-btn" onclick="showTab('chat')">💬 Chat Assistant</button>
+                </div>
+                
+                <div class="status-bar">
+                    <div class="status-message" id="statusMessage">
+                        👋 Welcome! Select a patient from the sidebar or register a new one.
+                    </div>
+                </div>
+                
+                <!-- Dashboard Tab -->
+                <div class="tab-content active" id="dashboardTab">
+                    <div class="actions-grid">
+                        <div class="action-card">
+                            <h4>🚀 Process RAG Pipeline</h4>
+                            <p id="ragPipelineAction">Select a patient to process RAG pipeline</p>
+                            <button class="btn btn-primary" id="processRagBtn" onclick="processRagPipeline()" disabled>Process Pipeline</button>
+                        </div>
+                        <div class="action-card">
+                            <h4>📄 Generate Patient Reports</h4>
+                            <p id="selectedPatientAction">Select a patient to generate reports</p>
+                            <button class="btn btn-success" id="generateReportsBtn" onclick="showGenerateReportsModal()" disabled>
+                                Generate Reports
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="selectedPatientDetails" style="display: none;">
+                        <h3 style="margin-bottom: 15px;">📋 Selected Patient</h3>
+                        <div class="action-card">
+                            <div id="patientDetailsContent"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Tab -->
+                <div class="tab-content" id="chatTab">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h3 id="chatTitle">💬 Medical Report Assistant</h3>
+                            <p id="chatSubtitle">Process the RAG pipeline first, then ask questions about patients</p>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-message assistant">
+                                👋 Hello! I'm your medical report assistant. Process the RAG pipeline first, then ask me questions about the patients and their lab reports.
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Ask about patient lab reports..." onkeypress="handleChatKeypress(event)">
+                            <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Patient Modal -->
+    <div class="modal" id="addPatientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Register New Patient</h3>
+                <button class="modal-close" onclick="closeModal('addPatientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addPatientForm" onsubmit="handleAddPatient(event)">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sex">Sex</label>
+                        <select id="sex" required>
+                            <option value="">Select...</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Register Patient</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Generate Reports Modal -->
+    <div class="modal" id="generateReportsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📄 Generate Lab Reports</h3>
+                <button class="modal-close" onclick="closeModal('generateReportsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">Generate lab reports for: <strong id="generateForPatient"></strong></p>
+                <form id="generateReportsForm" onsubmit="handleGenerateReports(event)">
+                    <div class="form-group">
+                        <label for="reportsCount">Number of Reports</label>
+                        <select id="reportsCount">
+                            <option value="2">2 Reports</option>
+                            <option value="3">3 Reports</option>
+                            <option value="4" selected>4 Reports</option>
+                            <option value="6">6 Reports</option>
+                            <option value="12">12 Reports (1 year)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateInterval">Interval Between Reports</label>
+                        <select id="dateInterval">
+                            <option value="1" selected>Monthly</option>
+                            <option value="2">Every 2 Months</option>
+                            <option value="3">Quarterly</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success" style="width: 100%;">Generate Reports</button>
+                </form>
             </div>
         </div>
     </div>
     
     <script>
-        let ragProcessed = false;
+        const API_BASE = '/medicalreport/api';
+        let authToken = null;
         let selectedPatient = null;
+        let allPatients = [];
         
-        function updateStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('status');
-            const statusClass = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
-            statusDiv.innerHTML = `<div class="status-message ${statusClass}">${message}</div>`;
-        }
+        // ============== Authentication ==============
         
-        function selectPatient(patientName, patientItem) {
-            // Clear previous selection
-            if (selectedPatient) {
-                const prevItem = document.querySelector(`[data-patient="${selectedPatient}"]`);
-                if (prevItem) {
-                    prevItem.classList.remove('selected');
-                }
-            }
+        window.onload = function() {
+            authToken = localStorage.getItem('auth_token');
+            const username = localStorage.getItem('admin_username');
             
-            // Clear previous chat conversations
-            clearChatMessages();
-            
-            // Set new selection
-            selectedPatient = patientName;
-            patientItem.classList.add('selected');
-            
-            // Update main chat section
-            updateMainChatForPatient(patientName);
-        }
-        
-        function clearChatMessages() {
-            const messagesContainer = document.getElementById('chatMessagesContainer');
-            const welcomeMessage = document.getElementById('chatWelcomeMessage');
-            
-            if (messagesContainer) {
-                messagesContainer.innerHTML = '';
-            }
-            
-            // Show welcome message again
-            if (welcomeMessage) {
-                welcomeMessage.classList.add('show');
-            }
-        }
-        
-        function updateMainChatForPatient(patientName) {
-            const welcomeMessage = document.getElementById('chatWelcomeMessage');
-            const chatInput = document.getElementById('chatInput');
-            
-            if (welcomeMessage) {
-                welcomeMessage.textContent = `👋 Ask questions about ${patientName}. I'll help you find information from their lab reports.`;
-            }
-            
-            if (chatInput) {
-                chatInput.placeholder = `Ask about ${patientName}...`;
-            }
-        }
-        
-        function clearMainChatPatient() {
-            const welcomeMessage = document.getElementById('chatWelcomeMessage');
-            const chatInput = document.getElementById('chatInput');
-            
-            if (welcomeMessage) {
-                welcomeMessage.textContent = `👋 Ask questions about patients. I'll help you find information from their lab reports.`;
-            }
-            
-            if (chatInput) {
-                chatInput.placeholder = `Ask a question about the patients...`;
-            }
-        }
-        
-        function formatMessage(text) {
-            if (!text) return '';
-            
-            // Split by double newlines to create paragraphs
-            let paragraphs = text.split(/\n\n+/);
-            let formatted = '';
-            
-            paragraphs.forEach(para => {
-                para = para.trim();
-                if (!para) return;
-                
-                // Check if it's a list item (starts with - or *)
-                if (/^[-*]\s/.test(para) || /^\d+\.\s/.test(para)) {
-                    // Convert to HTML list
-                    let listItems = para.split(/\n(?=[-*]\s|\d+\.\s)/);
-                    let listType = /^\d+\.\s/.test(para) ? 'ol' : 'ul';
-                    formatted += `<${listType}>`;
-                    listItems.forEach(item => {
-                        item = item.replace(/^[-*]\s/, '').replace(/^\d+\.\s/, '');
-                        formatted += `<li>${formatInlineMarkdown(item)}</li>`;
-                    });
-                    formatted += `</${listType}>`;
-                } else {
-                    // Regular paragraph
-                    formatted += `<p>${formatInlineMarkdown(para)}</p>`;
-                }
-            });
-            
-            return formatted || '<p>' + formatInlineMarkdown(text) + '</p>';
-        }
-        
-        function formatInlineMarkdown(text) {
-            return text
-                // Bold text **text**
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                // Italic text *text*
-                .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
-                // Single line breaks
-                .replace(/\n/g, '<br>');
-        }
-        
-        function addChatMessage(role, text) {
-            const messagesContainer = document.getElementById('chatMessagesContainer');
-            const welcomeMessage = document.getElementById('chatWelcomeMessage');
-            
-            if (!messagesContainer) return;
-            
-            // Hide welcome message once we have messages
-            if (welcomeMessage && messagesContainer.children.length === 0) {
-                welcomeMessage.classList.remove('show');
-            }
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${role}`;
-            
-            if (role === 'assistant') {
-                messageDiv.innerHTML = formatMessage(text);
-            } else {
-                messageDiv.textContent = text;
-            }
-            
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-        
-        async function listFiles() {
-            updateStatus('Loading patient list...', 'info');
-            try {
-                const response = await fetch('/medicalreport/api/files');
-                const data = await response.json();
-                
-                if (data.patients && data.patients.length > 0) {
-                    const filesList = document.getElementById('filesList');
-                    const patientsList = document.getElementById('patientsList');
-                    patientsList.innerHTML = '';
-                    
-                    // Clear selected patient when refreshing
-                    selectedPatient = null;
-                    
-                    data.patients.forEach(patient => {
-                        const patientItem = document.createElement('div');
-                        patientItem.className = 'patient-item';
-                        patientItem.textContent = patient;
-                        patientItem.setAttribute('data-patient', patient);
-                        patientItem.onclick = () => selectPatient(patient, patientItem);
-                        patientsList.appendChild(patientItem);
-                    });
-                    
-                    filesList.style.display = 'flex';
-                    updateStatus(`Found ${data.patients.length} unique patient(s) from ${data.total_files} file(s) in data directory`, 'success');
-                } else {
-                    document.getElementById('filesList').style.display = 'none';
-                    updateStatus('No patients found in data directory', 'info');
-                }
-            } catch (error) {
-                updateStatus(`Error: ${error.message}`, 'error');
-            }
-        }
-        
-        async function generateData() {
-            updateStatus('Generating sample data... This may take a moment.', 'info');
-            const btn = event.target;
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch('/medicalreport/api/generate-data', {
-                    method: 'POST'
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    updateStatus(`Successfully generated ${data.reports_generated} lab reports!`, 'success');
-                    // Refresh file list
-                    setTimeout(listFiles, 500);
-                } else {
-                    updateStatus(`Error: ${data.message}`, 'error');
-                }
-            } catch (error) {
-                updateStatus(`Error: ${error.message}`, 'error');
-            } finally {
-                btn.disabled = false;
-            }
-        }
-        
-        async function processRAG() {
-            updateStatus('Processing RAG pipeline... This may take a few moments.', 'info');
-            const btn = event.target;
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch('/medicalreport/api/process-rag', {
-                    method: 'POST'
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    ragProcessed = true;
-                    updateStatus(`RAG pipeline processed successfully! ${data.documents_processed} documents loaded. You can now ask questions.`, 'success');
-                } else {
-                    updateStatus(`Error: ${data.message}`, 'error');
-                }
-            } catch (error) {
-                updateStatus(`Error: ${error.message}`, 'error');
-            } finally {
-                btn.disabled = false;
-            }
-        }
-        
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const question = input.value.trim();
-            
-            if (!question) return;
-            
-            if (!ragProcessed) {
-                alert('⚠️ Please process the RAG pipeline first before asking questions.');
+            if (!authToken) {
+                window.location.href = '/medicalreport/login';
                 return;
             }
             
-            // Add user message
-            addChatMessage('user', question);
-            input.value = '';
-            
-            // Add loading message
-            const messagesContainer = document.getElementById('chatMessagesContainer');
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'chat-message assistant loading';
-            loadingDiv.textContent = 'Thinking...';
-            messagesContainer.appendChild(loadingDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            const sendBtn = document.getElementById('sendBtn');
-            sendBtn.disabled = true;
-            
+            // Verify token
+            verifyAuth().then(valid => {
+                if (!valid) {
+                    window.location.href = '/medicalreport/login';
+                    return;
+                }
+                
+                if (username) {
+                    document.getElementById('adminUsername').textContent = username;
+                }
+                
+                // Load patients
+                loadPatients();
+            });
+        };
+        
+        async function verifyAuth() {
             try {
-                const response = await fetch('/medicalreport/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        question: question,
-                        patient_name: selectedPatient
-                    })
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
                 });
-                
-                const data = await response.json();
-                
-                // Remove loading message
-                loadingDiv.remove();
-                
-                // Add assistant response
-                addChatMessage('assistant', data.answer);
-            } catch (error) {
-                loadingDiv.remove();
-                addChatMessage('assistant', `Error: ${error.message}`);
-            } finally {
-                sendBtn.disabled = false;
+                return response.ok;
+            } catch {
+                return false;
             }
         }
         
+        function logout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('admin_username');
+            window.location.href = '/medicalreport/';
+        }
+        
+        function getAuthHeaders() {
+            return {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            };
+        }
+        
+        // ============== UI Helpers ==============
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'status-message' + (type !== 'info' ? ` ${type}` : '');
+            statusDiv.textContent = message;
+        }
+        
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        function showAddPatientModal() {
+            document.getElementById('addPatientForm').reset();
+            showModal('addPatientModal');
+        }
+        
+        function showGenerateReportsModal() {
+            if (!selectedPatient) return;
+            document.getElementById('generateForPatient').textContent = 
+                `${selectedPatient.last_name}, ${selectedPatient.first_name}`;
+            showModal('generateReportsModal');
+        }
+        
+        // ============== Patient Management ==============
+        
+        async function loadPatients() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/patients?page_size=100`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    allPatients = data.patients;
+                    renderPatientList(allPatients);
+                } else if (response.status === 401) {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading patients:', error);
+            }
+        }
+        
+        function renderPatientList(patients) {
+            const listDiv = document.getElementById('patientList');
+            
+            if (patients.length === 0) {
+                listDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <p>No patients found.<br>Register a new patient to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            listDiv.innerHTML = patients.map(patient => `
+                <div class="patient-item ${selectedPatient && selectedPatient.id === patient.id ? 'selected' : ''}" 
+                     onclick="selectPatient(${patient.id})">
+                    <div class="patient-item-content">
+                        <div class="patient-name">
+                            ${patient.last_name}, ${patient.first_name}
+                            ${patient.report_count > 0 ? `<span class="reports-badge">${patient.report_count} reports</span>` : ''}
+                        </div>
+                        <div class="patient-info">ID: ${patient.patient_id} | DOB: ${patient.date_of_birth}</div>
+                    </div>
+                    <button class="delete-patient-btn" onclick="event.stopPropagation(); confirmDeletePatient(${patient.id}, '${patient.last_name}', '${patient.first_name}')" title="Delete patient">
+                        🗑️
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function searchPatients() {
+            const query = document.getElementById('patientSearch').value.toLowerCase();
+            const filtered = allPatients.filter(p => 
+                p.first_name.toLowerCase().includes(query) ||
+                p.last_name.toLowerCase().includes(query) ||
+                p.patient_id.toLowerCase().includes(query)
+            );
+            renderPatientList(filtered);
+        }
+        
+        function selectPatient(patientId) {
+            selectedPatient = allPatients.find(p => p.id === patientId);
+            renderPatientList(allPatients.filter(p => {
+                const query = document.getElementById('patientSearch').value.toLowerCase();
+                return p.first_name.toLowerCase().includes(query) ||
+                       p.last_name.toLowerCase().includes(query) ||
+                       p.patient_id.toLowerCase().includes(query);
+            }));
+            
+            if (selectedPatient) {
+                // Update Generate Reports action
+                document.getElementById('selectedPatientAction').textContent = 
+                    `Generate reports for ${selectedPatient.last_name}, ${selectedPatient.first_name}`;
+                document.getElementById('generateReportsBtn').disabled = false;
+                
+                // Update RAG Pipeline action
+                document.getElementById('ragPipelineAction').textContent = 
+                    `Process RAG for ${selectedPatient.last_name}, ${selectedPatient.first_name}`;
+                document.getElementById('processRagBtn').disabled = false;
+                
+                // Update patient details
+                document.getElementById('selectedPatientDetails').style.display = 'block';
+                document.getElementById('patientDetailsContent').innerHTML = `
+                    <p><strong>Name:</strong> ${selectedPatient.last_name}, ${selectedPatient.first_name}</p>
+                    <p><strong>Patient ID:</strong> ${selectedPatient.patient_id}</p>
+                    <p><strong>Date of Birth:</strong> ${selectedPatient.date_of_birth}</p>
+                    <p><strong>Sex:</strong> ${selectedPatient.sex}</p>
+                    <p><strong>Lab Reports:</strong> ${selectedPatient.report_count || 0}</p>
+                `;
+                
+                // Update chat context
+                document.getElementById('chatTitle').textContent = `💬 Asking about ${selectedPatient.last_name}, ${selectedPatient.first_name}`;
+                document.getElementById('chatSubtitle').textContent = `Questions will be filtered to this patient's records`;
+                document.getElementById('chatInput').placeholder = `Ask about ${selectedPatient.last_name}'s lab reports...`;
+                
+                // Clear chat history when selecting a new patient
+                clearChatHistory();
+                
+                updateStatus(`Selected patient: ${selectedPatient.last_name}, ${selectedPatient.first_name}`, 'success');
+            }
+        }
+        
+        async function handleAddPatient(event) {
+            event.preventDefault();
+            
+            const patientData = {
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                date_of_birth: document.getElementById('dateOfBirth').value,
+                sex: document.getElementById('sex').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/patients`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(patientData)
+                });
+                
+                if (response.ok) {
+                    const patient = await response.json();
+                    closeModal('addPatientModal');
+                    await loadPatients();
+                    selectPatient(patient.id);
+                    updateStatus(`Patient ${patient.last_name}, ${patient.first_name} registered successfully!`, 'success');
+                } else {
+                    const error = await response.json();
+                    updateStatus(`Error: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error registering patient: ${error.message}`, 'error');
+            }
+        }
+        
+        // ============== Delete Patient ==============
+        
+        function confirmDeletePatient(patientId, lastName, firstName) {
+            const confirmed = confirm(`Are you sure you want to delete patient ${lastName}, ${firstName}?\n\nThis will also:\n• Delete all lab report files for this patient\n• Remove all data from the vector database\n\nThis action cannot be undone.`);
+            if (confirmed) {
+                deletePatient(patientId, lastName, firstName);
+            }
+        }
+        
+        async function deletePatient(patientId, lastName, firstName) {
+            updateStatus(`Deleting patient ${lastName}, ${firstName}...`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/patients/${patientId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // If deleted patient was selected, clear selection
+                    if (selectedPatient && selectedPatient.id === patientId) {
+                        selectedPatient = null;
+                        document.getElementById('selectedPatientAction').textContent = 'Select a patient first';
+                        document.getElementById('generateReportsBtn').disabled = true;
+                        document.getElementById('ragPipelineAction').textContent = 'Select a patient first';
+                        document.getElementById('processRagBtn').disabled = true;
+                        document.getElementById('selectedPatientDetails').style.display = 'none';
+                        document.getElementById('chatTitle').textContent = '💬 Chat with AI Assistant';
+                        document.getElementById('chatSubtitle').textContent = 'Select a patient to ask questions about their records';
+                        document.getElementById('chatInput').placeholder = 'Select a patient first...';
+                        clearChatHistory();
+                    }
+                    
+                    await loadPatients();
+                    updateStatus(`${data.message} (${data.files_deleted} files, ${data.vectors_deleted} vectors deleted)`, 'success');
+                } else {
+                    const error = await response.json();
+                    updateStatus(`Error: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error deleting patient: ${error.message}`, 'error');
+            }
+        }
+        
+        // ============== Lab Report Generation ==============
+        
+        async function generateSampleData() {
+            updateStatus('Generating sample data...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/generate-data`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus(data.message, 'success');
+                } else {
+                    const error = await response.json();
+                    updateStatus(`Error: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function handleGenerateReports(event) {
+            event.preventDefault();
+            
+            if (!selectedPatient) return;
+            
+            const reportsCount = parseInt(document.getElementById('reportsCount').value);
+            const dateInterval = parseInt(document.getElementById('dateInterval').value);
+            
+            closeModal('generateReportsModal');
+            updateStatus(`Generating ${reportsCount} reports for ${selectedPatient.last_name}...`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/patients/${selectedPatient.id}/generate-reports`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        reports_count: reportsCount,
+                        date_interval_months: dateInterval
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    await loadPatients();
+                    // Re-select patient to update details
+                    selectPatient(selectedPatient.id);
+                    updateStatus(data.message, 'success');
+                } else {
+                    const error = await response.json();
+                    updateStatus(`Error: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // ============== RAG Pipeline ==============
+        
+        async function processRagPipeline() {
+            if (!selectedPatient) {
+                updateStatus('⚠️ Please select a patient first to process RAG pipeline', 'error');
+                return;
+            }
+            
+            updateStatus(`Processing RAG pipeline for ${selectedPatient.last_name}, ${selectedPatient.first_name}... This may take a moment.`, 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/patients/${selectedPatient.id}/process-rag`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus(`✅ ${data.message}`, 'success');
+                } else {
+                    const error = await response.json();
+                    updateStatus(`Error: ${error.detail}`, 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // ============== Chat ==============
+        
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+        
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Disable send button
+            const sendBtn = document.getElementById('chatSendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="spinner"></span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        message: message,
+                        patient_name: selectedPatient ? selectedPatient.last_name : null
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addChatMessage(data.response, 'assistant');
+                } else {
+                    const error = await response.json();
+                    addChatMessage(`Error: ${error.detail}`, 'assistant');
+                }
+            } catch (error) {
+                addChatMessage(`Error: ${error.message}`, 'assistant');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+            }
+        }
+        
+        function clearChatHistory() {
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.innerHTML = `
+                <div class="chat-message assistant">
+                    👋 Hello! I'm ready to answer questions about this patient's lab reports. Make sure to process the RAG pipeline first if you haven't already.
+                </div>
+            `;
+        }
+        
+        function addChatMessage(message, role) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${role}`;
+            messageDiv.innerHTML = formatMessage(message);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function formatMessage(text) {
+            // Convert markdown-like formatting to HTML
+            let html = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+            
+            // Wrap consecutive list items in ul
+            html = html.replace(/(<li>.*<\/li>\n?)+/g, match => `<ul>${match}</ul>`);
+            
+            // Convert newlines to paragraphs
+            html = html.split('\n\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('');
+            
+            return html || text;
+        }
     </script>
 </body>
 </html>
-
