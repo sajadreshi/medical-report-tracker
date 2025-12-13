@@ -29,8 +29,10 @@ wheels/
 *.egg
 MANIFEST
 
-# ChromaDB
+# Databases
 chroma_db/
+*.db
+medical_reports.db
 
 # IDE
 .vscode/

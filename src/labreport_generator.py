@@ -445,6 +445,114 @@ def main(num_patients=3, reports_per_patient=4, date_interval_months=1):
     print(f"  - {num_patients} patients with {reports_per_patient} reports each")
 
 
+def generate_for_patient(patient_info: dict, reports_count: int = 4, date_interval_months: int = 1) -> list:
+    """
+    Generate lab reports for a specific patient from the database.
+    
+    Args:
+        patient_info: Dictionary containing patient information:
+            - first_name: Patient's first name
+            - last_name: Patient's last name
+            - patient_id: Unique patient ID
+            - date_of_birth: Patient's date of birth
+            - sex: Patient's sex (Male/Female/Other)
+        reports_count: Number of reports to generate
+        date_interval_months: Months between reports
+    
+    Returns:
+        List of dictionaries with report information:
+            - filename: Report filename
+            - file_path: Full path to the PDF
+            - report_date: Date of the report
+            - report_number: Report number
+    """
+    data_dir = "data"
+    os.makedirs(data_dir, exist_ok=True)
+    
+    # Delete existing reports for this patient
+    patient_last_name = patient_info["last_name"].upper()
+    existing_pattern = os.path.join(data_dir, f"LabReport_{patient_last_name}_*.pdf")
+    existing_pdfs = glob.glob(existing_pattern)
+    for pdf_file in existing_pdfs:
+        try:
+            os.remove(pdf_file)
+            print(f"Deleted existing report: {pdf_file}")
+        except OSError as e:
+            print(f"Warning: Could not delete {pdf_file}: {e}")
+    
+    # Generate lab info
+    lab_info = generate_lab_info()
+    
+    # Format patient info for report generation
+    # Handle date_of_birth which might be a string or date object
+    dob = patient_info["date_of_birth"]
+    if isinstance(dob, str):
+        # Parse string date (YYYY-MM-DD format from database)
+        from datetime import datetime as dt
+        dob_date = dt.strptime(dob, "%Y-%m-%d").date()
+        dob_str = dob_date.strftime("%m/%d/%Y")
+    else:
+        dob_str = dob.strftime("%m/%d/%Y")
+    
+    formatted_patient = {
+        "name": f"{patient_info['last_name'].upper()}, {patient_info['first_name'].upper()}",
+        "dob": dob_str,
+        "sex": patient_info["sex"],
+        "order_prefix": ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=random.randint(2, 3))),
+        "pat_id": patient_info["patient_id"],
+        "provider": f"Dr. {fake.first_name()} {fake.last_name()}",
+    }
+    
+    # Select test panels
+    available_panels = list(TEST_PANELS.keys())
+    num_panels = random.randint(2, min(4, len(available_panels)))
+    selected_panels = random.sample(available_panels, num_panels)
+    
+    # Generate sequential dates
+    start_date = fake.date_between(start_date='-6m', end_date='-5m')
+    report_dates = generate_sequential_dates(
+        start_date=start_date,
+        num_reports=reports_count,
+        interval_months=date_interval_months
+    )
+    
+    generated_reports = []
+    
+    print(f"\nGenerating {reports_count} reports for {formatted_patient['name']}...")
+    
+    for report_num, report_date_str in enumerate(report_dates, start=1):
+        # Generate test results
+        test_sections = generate_test_results(panels=selected_panels, abnormal_ratio=0.2)
+        
+        # Generate unique order ID
+        order_id = f"{formatted_patient['order_prefix']}{random.randint(100000, 999999)}"
+        
+        # Create filename
+        filename = f"LabReport_{patient_last_name}_Report{report_num}_{report_date_str.replace('/', '')}.pdf"
+        file_path = os.path.join(data_dir, filename)
+        
+        # Generate report
+        create_lab_report(
+            file_path, lab_info, formatted_patient, test_sections,
+            report_date_str, order_id
+        )
+        
+        # Parse date for database
+        from datetime import datetime as dt
+        report_date = dt.strptime(report_date_str, "%m/%d/%Y").date()
+        
+        generated_reports.append({
+            "filename": filename,
+            "file_path": file_path,
+            "report_date": report_date,
+            "report_number": report_num
+        })
+    
+    print(f"Generated {len(generated_reports)} reports for {formatted_patient['name']}")
+    
+    return generated_reports
+
+
 if __name__ == "__main__":
     # Generate 3 patients with 4 reports each (monthly intervals)
     main(num_patients=3, reports_per_patient=4, date_interval_months=1)
